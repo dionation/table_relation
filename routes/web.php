@@ -11,6 +11,7 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::redirect('/', '/admin/users');
+
+
+Route::resource('/admin/users', 'UsersController');
