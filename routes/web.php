@@ -11,7 +11,12 @@
 |
 */
 
-Route::redirect('/', '/admin/users');
+Route::get('/', function(){
+  return redirect('/home');
+});
 
 
 Route::resource('/admin/users', 'UsersController');
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
