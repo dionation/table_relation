@@ -26,18 +26,20 @@
             <td>{{ $user->name }}</td>
             <td>{{ $user->email }}</td>
             <td>{{$user->role->name}}</td>
+          <td>{{$user->id}}</td>
           <td>
-            <form action="/admin/users/{{$user->id}}/edit" method="get">
-              <button class="btn btn-warning text-warning">Edit</button>
-            </form>
+            @can('AdminView',$user->role_id)  
+              <form action="/admin/users/{{$user->id}}/edit" method="get">
+                <button class="btn btn-warning text-warning">Edit</button>
+              </form>
+            @endcan
           </td>
           <td>
             <form action="/admin/users/{{$user->id}}" method="post">
                 @csrf
                 @method('DELETE')
-                  @can('DeleteUser',$user->role_id)              
+                        
                     <button class="btn btn-danger text-danger">Delete</button>
-                  @endcan
             </form>
             </td>
           </tr>

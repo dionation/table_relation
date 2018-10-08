@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\User;
 use App\Role;
+use Auth;
 Use App\Http\Requests\UserEditValidation;
 Use App\Http\Requests\UserCreateValidation;
 use Illuminate\Support\Facades\Storage;
@@ -12,9 +13,9 @@ class UsersController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth');
-        $this->middleware('notmember');
-        $this->middleware('onlysuperadmin',['except' => ['index','create']]);
+        // $this->middleware('auth');
+        // $this->middleware('notmember');
+        // $this->middleware('onlysuperadmin',['except' => ['index','create']]);
     }
     /**
      * Display a listing of the resource.
@@ -23,7 +24,9 @@ class UsersController extends Controller
      */
     public function index()
     {
+
         $users = User::all();
+        $this->authorize('AdminView', Auth::user()->role_id);
         return view('users-index', compact('users'));
     }
 
@@ -46,6 +49,7 @@ class UsersController extends Controller
      */
     public function store(UserCreateValidation $request)
     {
+        $this->authorize('AdminCreate', $request->role);
         $path = $request->image->store('images', 'public');
         $table = new User;
         $table->name = $request->name;
@@ -77,6 +81,8 @@ class UsersController extends Controller
     public function edit($id)
     {
         $user = User::find($id);
+        $this->authorize('AdminView',$user->role_id); 
+       
         $roles = Role::all();
         return view('users-edit',compact('user','roles'));
     }
@@ -91,6 +97,7 @@ class UsersController extends Controller
     public function update(UserEditValidation $request, $id)
     {
         $user = User::find($id);
+        $this->authorize('AdminUpdate',$user->role_id); 
         $user->name = $request->name;
         $user->email = $request->email;
         if($request->password){
